@@ -1,0 +1,37 @@
+# Book settings
+# Learn more at https://jupyterbook.org/customize/config.html
+
+title: lld_practice
+author: Vaibhav Bansal
+copyright: "2026"
+logo: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKEAAACUCAMAAADMOLmaAAAAZlBMVEX///8AAAAyMjLc3NylpaX7+/tNTU04ODj4+Pitra3j4+MiIiKqqqrw8PBGRkbz8/NnZ2d7e3tBQUGamprKysosLCySkpK9vb2EhIQdHR3U1NRbW1sQEBCKiopVVVW3t7dvb28XFxe5XLE/AAAB/ElEQVR4nO3a4W6CMBSG4RZFEMGpgAzddN7/TQ6zLfaojaWuPSfb9/4UXZ4AZdCiFEIIIYQQQgghhBBCCCGEEPpXVeX00tHcktY/H5flsSlyLuFkoS8tU2NLbmzQfbLZ10Vq/TMhhYnhmFmFX7XbXXzkKOGwL1edcOFQ1sTdj+OFWq8n0oW6n0sXDruxki7UyxfpQp3EOhm9hTqLRPQX6izOgX5CqA9RiHahms6/K7cfyV3iK7OQlHf79pZ4tH4/vvD81e2NMClECYcvHxiO8yihUnV/RdxJE6ruSrgXJ1STEyU24oSqeyPCtTyhokM6Cz2cPYRqQ4ih7xV9hA0RrgQK0zUhChReDZbAl0S78DLnMERPtpSciTWXkNx9tfRX7xFPREdhRn9FxspBorAyty3DPvf5CXNzqAS+ZvsJyVAJ/EjlKZwZ2wI/l/5ZofijLH+kyL/ayL9ii/+vJ/HOgQqF3H3ZhVLuYO3C4hTxNPQTmutYjE9SjkLGp1FHIeMTvaMw+NTSs0LOmSU3IefsnJOQdYbTRRh/ltjckjoIo8+0Z3Ozx8L4qxX27goZVnzGCTlWzUYJWVYexwh5Vm9HCJlWwF2FPdtbBK7Ctozm8xNWfG+zOArjBuEvCBePeUMbPiF5Q9LS+Q1JPiFCCCGEEEIIIYQQQgghhBAS1yd4wRutzTLLEwAAAABJRU5ErkJggg==
+
+# Force re-execution of notebooks on each build.
+# See https://jupyterbook.org/content/execute.html
+execute:
+  execute_notebooks: force
+
+# Define the name of the latex output file for PDF builds
+latex:
+  latex_documents:
+    targetname: book.tex
+
+# Add a bibtex file so that we can create citations
+bibtex_bibfiles:
+  - references.bib
+
+# Information about where the book exists on the web
+repository:
+  url: https://github.com/VaibhavBansal26/lld_practice  # Online location of your book
+  path_to_book: docs  # Optional path to your book, relative to the repository root
+  branch: master  # Which branch of the repository should be used when creating links (optional)
+
+# Add GitHub buttons to your book
+# See https://jupyterbook.org/customize/config.html#add-a-link-to-your-repository
+html:
+  use_issues_button: false
+  use_repository_button: true
+
+sphinx:
+  config:
+    nb_merge_streams: true
