@@ -1,4 +1,4 @@
-name: Deploy Jupyter Book to GitHub Pages
+name: Deploy Jupyter Book (classic) to GitHub Pages
 
 on:
   push:
@@ -24,34 +24,32 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
+          cache: pip
 
-      - name: Install dependencies
+      - name: Install dependencies (pin classic jupyter-book in requirements.txt)
         run: |
           python -m pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-          pip install -U jupyter-book
+          pip install -r requirements.txt
 
-      - name: Preflight (confirm files exist)
+      - name: Preflight
         run: |
-          echo "Root files:"
+          echo "Repo root:"
           ls -la
-          echo "intro.md:"
-          ls -la intro.md || true
           echo "_toc.yml:"
-          cat _toc.yml || true
+          cat _toc.yml
+          echo "_config.yml:"
+          cat _config.yml
           echo "All md/ipynb files:"
           find . -maxdepth 4 -type f \( -name "*.md" -o -name "*.ipynb" \) -print
 
-      - name: Build Jupyter Book (print full error if fails)
-        run: |
-          set -e
-          jupyter-book build . 2>&1 | tee jb_build.log
+      - name: Build Jupyter Book (classic)
+        run: jupyter-book build .
 
-      - name: Verify output
+      - name: Verify output exists
         run: |
-          echo "Build folders:"
-          find _build -maxdepth 3 -type d -print || true
-          test -d "_build/html" || (echo "ERROR: _build/html not created. Build likely failed above." && exit 1)
+          ls -la _build || true
+          ls -la _build/html || true
+          test -d "_build/html" || (echo "ERROR: _build/html not created" && exit 1)
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
