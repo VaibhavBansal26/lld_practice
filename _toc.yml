@@ -6,10 +6,9 @@ parts:
     chapters:
       - file: introduction/ood_intro
       - file: introduction/oop_fundamentals
-
   - caption: Design Patterns
-    chapters: []
-
+    chapters:
+      - file: patterns/design_patterns
   - caption: Low Level Design Case Studies
-    chapters: []
-  
+    chapters:
+      - file: parking_lot/parking_lot
