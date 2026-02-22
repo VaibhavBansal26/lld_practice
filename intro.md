@@ -1,1 +1,3 @@
+# Low Level Design (LLD)
+
 Low Level Design (LLD) is a crucial aspect of software engineering that focuses on the detailed design of individual components and modules within a system. It involves breaking down high-level design into smaller, more manageable pieces, defining the internal structure and behavior of each component, and specifying how they interact with each other. LLD is essential for ensuring that the system is well-structured, maintainable, and scalable.
