@@ -1,19 +1,15 @@
-# Table of contents
-# Learn more at https://jupyterbook.org/customize/toc.html
-
 format: jb-book
-root: intro
+root: README
+
 parts:
-- caption: Course Information 
-  chapters:
-  - file: README
+  - caption: Introduction to Object Oriented Design
+    chapters:
+      - file: introduction/ood_intro
+      - file: introduction/oop_fundamentals
 
-- caption: Introduction to Object-Oriented Design
-  chapters:
-  - file: introduction/ood_intro
-  - file: introduction/oop_fundamentals
+  - caption: Design Patterns
+    chapters: []
 
-- capption: Design Patterns
-- caption: Low Level Design Case Studies
-
+  - caption: Low Level Design Case Studies
+    chapters: []
   
