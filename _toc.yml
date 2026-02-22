@@ -14,9 +14,6 @@ parts:
   - file: introduction/oop_fundamentals
 
 - capption: Design Patterns
-  chapters:
-
 - caption: Low Level Design Case Studies
-  chapters:
-  - file: lld_case_studies/parking_lot
+
   
