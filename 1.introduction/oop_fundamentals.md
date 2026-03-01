@@ -7,6 +7,18 @@ Cornerstones of Object-Oriented Programming
 3. **Inheritance:** A mechanism where a new class (child) inherits properties and behaviors (attributes and methods) from an existing class (parent).
 4. **Polymorphism:** The ability of different classes to be treated as instances of the same class through a common interface, often achieved through method overriding or method overloading.
 
+Key Notes:
+```text
+- Encapsulation:
+Protected data + controlled access.
+- Abstraction:
+Hiding complexity + exposing essential features.
+- Inheritance:
+Code reuse + hierarchical relationships.
+- Polymorphism:
+Same action, different behavior.
+```
+
 Other Important OOP Concepts:
 
 1. **Composition:** Building complex objects by combining simpler ones, often using "has-a" relationships instead of "is-a" relationships (inheritance).
@@ -428,6 +440,17 @@ To choose between inheritance and composition, follow these guidelines:
 
 Polymorphism is the concept of implementing objects that can take on multiple forms or behave differently depending on their context, all within a common interface. It provides the flexibility to add new behaviors without modifying existing code.
 
+```
+Polymorphism means different objects can use the same method name but perform different actions depending on the object.
+```
+
+```
+👉 Same action, different behavior.
+
+Same method name ✅
+Different behavior ✅
+```
+
 Consider a media player as a real-world example. Different types of media, such as audio, video, and streaming content, would be played on the same rendering widget and controlled by the same “play” button. But they require different internal processing and rendering logic. The user only interacts with a uniform interface, while polymorphic behavior manages the varying objects.
 
 
@@ -465,7 +488,7 @@ Operator overloading + duck typing replaces compile time polymorphism.
 
 
 ```
-n Java, method overloading is compile time polymorphism because the compiler determines which method to call based on parameter types before execution. Python does not support true compile time polymorphism since it is dynamically typed; instead, the same behavior is achieved through runtime polymorphism where method behavior is decided during execution.
+In Java, method overloading is compile time polymorphism because the compiler determines which method to call based on parameter types before execution. Python does not support true compile time polymorphism since it is dynamically typed; instead, the same behavior is achieved through runtime polymorphism where method behavior is decided during execution.
 ```
 
 2. Runtime polymorphism via method overriding
@@ -496,3 +519,38 @@ Polymorphism is particularly valuable in the following scenarios:
 - Shared Interface: When multiple classes need to perform the same action in different ways, such as a play method for various media types (e.g., audio, video). Interfaces or superclasses ensure a consistent contract across implementations.
 - Extensibility: When designing systems that need to accommodate new classes without modifying existing code. For example, adding a new media type to a player only requires implementing the existing play interface, preserving system stability.
 - Customization: When subclasses need to tailor the behavior of inherited methods. For instance, a Dog barking differently from a Cat uses method overriding to provide specific implementations while adhering to the Animal interface.
+
+
+**Abstraction vs Polymorphism** 
+
+```text
+Abstraction focuses on hiding complexity and exposing essential features, while polymorphism allows objects of different classes to be treated as instances of the same class through a common interface. Abstraction defines what an object does, while polymorphism defines how different objects can perform the same action in their own way.
+
+Abstraction: It defines what you can do.
+```
+
+Abstraction → defines common method
+Polymorphism → allows different implementations
+
+        Shape
+        area()        ← Abstraction (rule)
+           |
+    -------------------
+    |                 |
+ Rectangle          Circle
+ area()             area()
+ (different logic)  (different logic)
+
+          ↑
+     Polymorphism
+
+```
+Abstraction defines a common method like area() that all shapes must implement, while polymorphism allows different shapes to implement that method differently. Abstraction creates the interface, and polymorphism provides multiple behaviors using that interface.
+```
+
+```
+Abstraction → WHAT is required
+Polymorphism → HOW it happens differently
+Encapsulation → WHO can access data
+Inheritance → WHO gets features
+```
