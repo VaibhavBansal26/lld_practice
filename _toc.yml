@@ -12,11 +12,11 @@ parts:
       - file: 2.solid_principles/design_principles
   - caption: Design Patterns
     chapters:
-      - file: patterns/design_patterns
-      - file: patterns/creational_pattern
-      - file: patterns/structural_pattern
-      - file: patterns/behavioral_patterns
-      - file: patterns/concurrency_patterns
+      - file: 3.patterns/design_patterns
+      - file: 3.patterns/creational_pattern
+      - file: 3.patterns/structural_pattern
+      - file: 3.patterns/behavioral_patterns
+      - file: 3.patterns/concurrency_patterns
   - caption: Low Level Design Case Studies
     chapters:
       - file: parking_lot/parking_lot
