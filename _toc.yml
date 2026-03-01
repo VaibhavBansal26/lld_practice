@@ -4,11 +4,19 @@ root: intro
 parts:
   - caption: Introduction to Object Oriented Design
     chapters:
-      - file: introduction/ood_intro
-      - file: introduction/oop_fundamentals
+      - file: 1.introduction/ood_intro
+      - file: 1.introduction/oop_fundamentals
+  - caption: Principles of Object Oriented Design
+    chapters:
+      - file: 2.solid_principles/solid_principles
+      - file: 2.solid_principles/design_principles
   - caption: Design Patterns
     chapters:
       - file: patterns/design_patterns
+      - file: patterns/creational_pattern
+      - file: patterns/structural_pattern
+      - file: patterns/behavioral_patterns
+      - file: patterns/concurrency_pattern
   - caption: Low Level Design Case Studies
     chapters:
       - file: parking_lot/parking_lot
