@@ -527,7 +527,7 @@ Polymorphism is particularly valuable in the following scenarios:
 Abstraction focuses on hiding complexity and exposing essential features, while polymorphism allows objects of different classes to be treated as instances of the same class through a common interface. Abstraction defines what an object does, while polymorphism defines how different objects can perform the same action in their own way.
 
 Abstraction: It defines what you can do.
-```
+```text
 
 Abstraction → defines common method
 Polymorphism → allows different implementations
@@ -545,12 +545,8 @@ Polymorphism → allows different implementations
      Polymorphism
 
 ```
+
+```
 Abstraction defines a common method like area() that all shapes must implement, while polymorphism allows different shapes to implement that method differently. Abstraction creates the interface, and polymorphism provides multiple behaviors using that interface.
 ```
 
-```
-Abstraction → WHAT is required
-Polymorphism → HOW it happens differently
-Encapsulation → WHO can access data
-Inheritance → WHO gets features
-```

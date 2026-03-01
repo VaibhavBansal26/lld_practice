@@ -13,7 +13,7 @@ parts:
       - file: 2.solid_principles/design_principles
   - caption: Design Patterns
     chapters:
-      - file: 3.patterns/design_patterns
+      - file: 3.patterns/design_pattern
       - file: 3.patterns/creational_pattern
       - file: 3.patterns/structural_pattern
       - file: 3.patterns/behavioral_patterns
