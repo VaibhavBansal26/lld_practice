@@ -21,13 +21,14 @@ parts:
   - caption: Low Level Design Case Studies
     chapters:
       - file: 4.easy_problems/parking_lot
-      - file: 4.easy_problems/vending_machine
       - file: 4.easy_problems/movie_ticket
+      - file: 4.easy_problems/vending_machine
       - file: 4.easy_problems/unix_file_system
-      - file: 4.easy_problems/restaurant_management
       - file: 4.easy_problems/atm_machine
-      - file: 4.easy_problems/grocery_store
       - file: 4.easy_problems/elevator_system
+      - file: 4.easy_problems/grocery_store
+      - file: 4.easy_problems/restaurant_management
       - file: 4.easy_problems/tic_tac_toe
-      - file: 4.easy_problems/black_jack
       - file: 4.easy_problems/shipping_locker_system
+      - file: 4.easy_problems/black_jack
+      
