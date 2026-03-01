@@ -16,7 +16,7 @@ parts:
       - file: patterns/creational_pattern
       - file: patterns/structural_pattern
       - file: patterns/behavioral_patterns
-      - file: patterns/concurrency_pattern
+      - file: patterns/concurrency_patterns
   - caption: Low Level Design Case Studies
     chapters:
       - file: parking_lot/parking_lot
