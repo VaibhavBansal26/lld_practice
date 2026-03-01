@@ -1,4 +1,4 @@
-# Design Patterns
+# 0. Design Patterns
 
 Main categories of design patterns:
 1. **Creational Patterns:** Deal with object creation mechanisms, trying to create objects in a manner suitable to the situation. Examples include Singleton, Factory Method, Abstract Factory, Builder, and Prototype patterns.
