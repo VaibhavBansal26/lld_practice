@@ -1,4 +1,4 @@
-# Design Principles
+# 2. Design Principles
 In addition to the SOLID principles, there are several other important principles that contribute to good software design. These principles help developers create maintainable, scalable, and robust applications.
 1. **DRY (Don't Repeat Yourself):** This principle emphasizes the importance of reducing code duplication. By avoiding repetition, developers can make their code more maintainable and easier to understand.
 2. **KISS (Keep It Simple, Stupid):** This principle encourages developers to keep their designs and implementations as simple as possible. Simple code is easier to read, understand, and maintain.

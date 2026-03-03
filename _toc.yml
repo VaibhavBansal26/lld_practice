@@ -19,17 +19,22 @@ parts:
       - file: 3.patterns/structural_pattern
       - file: 3.patterns/behavioral_patterns
       - file: 3.patterns/concurrency_patterns
+  - caption: Concurrency
+    chapters:
+      - file: 4.concurrency/concurrency101
+      - file: 4.concurrency/synchronization_primitive
+      - file: 4.concurrency/concurrency_challenges
   - caption: LLD Case Studies (Easy)
     chapters:
-      - file: 4.easy_problems/parking_lot
-      - file: 4.easy_problems/movie_ticket
-      - file: 4.easy_problems/vending_machine
-      - file: 4.easy_problems/unix_file_system
-      - file: 4.easy_problems/atm_machine
-      - file: 4.easy_problems/elevator_system
-      - file: 4.easy_problems/grocery_store
-      - file: 4.easy_problems/restaurant_management
-      - file: 4.easy_problems/tic_tac_toe
-      - file: 4.easy_problems/shipping_locker_system
-      - file: 4.easy_problems/black_jack
+      - file: 5.easy_problems/parking_lot
+      - file: 5.easy_problems/movie_ticket
+      - file: 5.easy_problems/vending_machine
+      - file: 5.easy_problems/unix_file_system
+      - file: 5.easy_problems/atm_machine
+      - file: 5.easy_problems/elevator_system
+      - file: 5.easy_problems/grocery_store
+      - file: 5.easy_problems/restaurant_management
+      - file: 5.easy_problems/tic_tac_toe
+      - file: 5.easy_problems/shipping_locker_system
+      - file: 5.easy_problems/black_jack
       

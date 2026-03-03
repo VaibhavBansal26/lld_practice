@@ -1,4 +1,4 @@
-# Introduction to Object Oriented Design
+# 1. Introduction to Object Oriented Design
 
 Are we focusing on high-level class diagram, code structure, or a full implementation?
 
