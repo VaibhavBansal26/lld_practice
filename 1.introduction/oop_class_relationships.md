@@ -4,7 +4,7 @@
 
 **Types of association:**
 
-2. **one-to-one:** A single instance of one class is associated with a single instance of another class.
+1. **one-to-one:** A single instance of one class is associated with a single instance of another class.
 ```python
 class Person:
     def __init__(self, name):
@@ -174,7 +174,7 @@ Why This Design Works
 - Adding data to the relationship is natural. Because Appointment is a full object, you can add fields like time, status, notes, or diagnosis without modifying Doctor or Patient. Try doing that with a direct many-to-many reference.
 
 
-1. **Aggregation:** A special form of association where one class is a part of another class. The part can exist independently of the whole. It represents a "has-a" relationship.
+2. **Aggregation:** A special form of association where one class is a part of another class. The part can exist independently of the whole. It represents a "has-a" relationship.
 
 ```python
 class Department:
@@ -372,8 +372,8 @@ print(f"After starting the engine and shifting the transmission, the engine is n
 In this example, the `Car` class is composed of multiple parts: `Engine`, `Transmission`, and `Chassis`. Each of these parts cannot exist independently of the car. If the car is destroyed, all of its parts are also destroyed. This demonstrates multiple composition relationships within a single class, where the car is the whole and the engine, transmission, and chassis are integral parts that define the car's functionality and existence. The association is established through attributes in the `Car` class that create instances of each part, indicating that they are all essential components of the car.
 
 
-Practical Example:
-et's model the ordering scenario. An Order composes multiple LineItem objects. The order creates line items internally when items are added, and destroys them when the order is destroyed.
+**Practical Example:**
+Let's model the ordering scenario. An Order composes multiple LineItem objects. The order creates line items internally when items are added, and destroys them when the order is destroyed.
 
 ```python
 class LineItem:
@@ -507,6 +507,7 @@ if __name__ == "__main__":
 In this example, the `TicketBookingService` class depends on four other classes: `SeatValidator`, `PaymentProcessor`, `QRCodeGenerator`, and `EmailService`. The booking service relies on these classes to perform its function of booking a ticket, but it only interacts with them during the execution of the `book_ticket` method. Each of these classes is responsible for a specific aspect of the booking process, and the `TicketBookingService` uses them as needed without maintaining any long-term association with them. This demonstrates a dependency relationship where the `TicketBookingService` depends on other classes to complete its task, but those classes can exist independently and are not owned or managed by the booking service.
 
 Why This Design Works
+
 - All dependencies are method parameters. TicketBookingService has zero fields. Every collaborator comes in through bookTicket() and disappears when the method returns. This is pure dependency with no structural coupling.
 - Each class has a single responsibility. SeatValidator validates seats. PaymentProcessor handles payments. QRCodeGenerator generates codes. EmailService sends emails. The booking service just coordinates the flow.
 - Testing is straightforward. You can pass mock implementations of any dependency without touching the booking service. Want to test what happens when payment fails? Pass a mock - - PaymentProcessor that returns false.
