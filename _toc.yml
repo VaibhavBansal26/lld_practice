@@ -6,6 +6,7 @@ parts:
     chapters:
       - file: 1.introduction/ood_intro
       - file: 1.introduction/oop_fundamentals
+      - file: 1.introduction/oop_class_relationships
       - file: 1.introduction/oop_summary
   - caption: Principles of Object Oriented Design
     chapters:
@@ -18,7 +19,7 @@ parts:
       - file: 3.patterns/structural_pattern
       - file: 3.patterns/behavioral_patterns
       - file: 3.patterns/concurrency_patterns
-  - caption: Low Level Design Case Studies
+  - caption: LLD Case Studies (Easy)
     chapters:
       - file: 4.easy_problems/parking_lot
       - file: 4.easy_problems/movie_ticket
