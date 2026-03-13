@@ -1,9 +1,10 @@
 #   1. Creational Patterns
 
-## 1. Singleton Pattern**
+## 1. Singleton Pattern
 
 ```text
-Singleton Pattern is a creational design pattern that guarantees a class has only one instance and provides a global point of access to it.
+Singleton Pattern is a creational design pattern that guarantees a class 
+has only one instance and provides a global point of access to it.
 ```
 
 Two requirements define the pattern:
@@ -84,6 +85,7 @@ class LazySingleton:
 ```
 
 How it works
+
 - getInstance() method checks if an instance already exists.
 - If not, it creates a new instance.
 - If an instance already exists, it skips the creation step.
@@ -442,5 +444,459 @@ It's important to note that the Singleton pattern should be used judiciously, as
 
 - **4. Builder Pattern**
 
+```text
+The Builder Design Pattern is a creational pattern that lets you construct complex objects step-by-step, separating the construction logic from the final representation.
+```
+
+It’s particularly useful in situations where:
+
+- An object has many optional fields, and most callers only need a subset.
+- You want to avoid telescoping constructors or long parameter lists.
+- The object must be assembled through multiple steps, possibly in a specific order.
+  
+Without a builder, developers often end up with overloaded constructors or a wide set of setters. For example, a User object might include fields like name, email, phone, address, and preferences. As the number of fields grows, the API becomes harder to use correctly, easier to misuse, and more difficult to maintain.
+
+The Builder Pattern addresses this by introducing a dedicated builder that owns the creation logic. Clients configure the builder step by step and then build the final object, which can remain immutable, validated, and consistently constructed.
+
+
+1. The Problem: Building Complex HttpRequest Objects
+
+Imagine you're building a system that needs to configure and create HTTP requests.
+
+Each HttpRequest can contain a mix of required and optional fields:
+
+URL (required)
+HTTP Method (e.g., GET, POST, PUT, defaults to GET)
+Headers (optional, multiple key-value pairs)
+Query Parameters (optional, multiple key-value pairs)
+Request Body (optional, typically for POST/PUT)
+Timeout (optional, default to 30 seconds)
+At first glance, it seems manageable. But as the number of optional fields increases, so does the complexity of object construction.
+
+The Naive Approach: Telescoping Constructors
+A common approach is constructor overloading, often called the telescoping constructor anti-pattern. You define multiple constructors with increasing numbers of parameters:
+
+```python
+class HttpRequestTelescoping:
+    def __init__(self, url, method="GET", headers=None, query_params=None, body=None, timeout=30000):
+        self.url = url
+        self.method = method
+        self.headers = headers if headers is not None else {}
+        self.query_params = query_params if query_params is not None else {}
+        self.body = body
+        self.timeout = timeout
+
+        print(f"HttpRequest Created: URL={url}, "
+              f"Method={method}, "
+              f"Headers={len(self.headers)}, "
+              f"Params={len(self.query_params)}, "
+              f"Body={body is not None}, "
+              f"Timeout={timeout}")
+
+    # Optional: add getter methods if needed
+```
+Example Client Code
+
+```python
+if __name__ == "__main__":
+    req1 = HttpRequestTelescoping("https://api.example.com/data")
+
+    req2 = HttpRequestTelescoping(
+        "https://api.example.com/submit",
+        "POST",
+        None,
+        None,
+        '{"key":"value"}'
+    )
+
+    req3 = HttpRequestTelescoping(
+        "https://api.example.com/config",
+        "PUT",
+        {"X-API-Key": "secret"},
+        None,
+        "config_data",
+        5000
+    )
+```
+
+What’s Wrong with This Approach?
+
+While it works functionally, this design quickly becomes unwieldy and error-prone as the object becomes more complex.
+
+1. Hard to Read and Write
+Multiple parameters of the same type (e.g., String, Map) make it easy to accidentally swap arguments. Code is difficult to understand at a glance, especially when most parameters are null.
+
+2. Error-Prone
+Clients must pass null for optional parameters they do not want to set, increasing the risk of bugs. One wrong position and you silently assign a value to the wrong field.
+
+3. Inflexible and Fragile
+If you want to set parameter 5 but not 3 and 4, you are forced to pass null for 3 and 4. You must follow the exact parameter order, which hurts both readability and usability.
+
+4. Poor Scalability
+Adding a new optional parameter requires adding or changing constructors, which may break existing code. Testing and documentation become increasingly difficult to maintain.
+
+We need a more flexible, readable, and maintainable way to construct HttpRequest objects. This is exactly where the Builder pattern comes in.
+
+2. What is the Builder Pattern
+
+The Builder pattern separates the construction of a complex object from its representation, allowing the same construction process to create different configurations.
+
+Two ideas define the pattern:
+
+Step-by-step construction: Instead of passing everything to a constructor at once, you set each field through individual method calls. You only call the methods for the fields you need.
+Fluent interface: Each setter method returns the builder itself, allowing you to chain calls into a single readable expression that ends with build().
+Before: Telescoping Constructor
+
+```python
+req = HttpRequest(
+    url,                 # url
+    method,              # method
+    headers,             # headers
+    None,                # body
+    None,                # query_params
+    30000                # timeout_ms
+)
+```
+After: Builder Pattern
+
+```python
+req = (HttpRequest.Builder(url)
+       .method("POST")
+       .add_header("key", "val")
+       .build())
+```
+
+
+
+Class Diagram
+
+The Builder pattern involves four participants. In many real-world implementations, the Director is optional and is often skipped when using fluent builders.
+
+Builder (e.g., HttpRequestBuilder)
+
+- Exposes methods to configure the product step by step.
+- Typically returns the builder itself from each method to enable fluent chaining.
+- Often implemented as a static nested class inside the product class.
+  
+ConcreteBuilder (e.g., StandardHttpRequestBuilder)
+
+- Implements the builder API (either via an interface or directly through fluent methods).
+- Stores intermediate state for the object being constructed.
+- Implements build() to validate inputs and produce the final product instance.
+
+Product (e.g., HttpRequest)
+
+- The complex object being constructed.
+- Often immutable and created only through the builder.
+- Commonly has a private constructor that copies state from the builder.
+
+Director (Optional) (e.g., HttpRequestDirector)
+
+- Coordinates the construction process by calling builder steps in a specific sequence.
+- Useful when you want to encapsulate standard configurations or reusable construction sequences.
+- Often omitted in fluent builder style, where the client effectively plays this role by chaining builder calls.
+
+How It Works
+
+Step 1: Create the Builder
+The client creates a Builder, passing any required parameters to its constructor.
+
+Step 2: Configure Optional Fields
+The client calls setter methods on the Builder for each optional field it needs. Each method returns the Builder itself, enabling chaining. The order of these calls does not matter.
+
+Step 3: Build the Product
+The client calls build(). The Builder passes itself to the Product's private constructor, which copies the configured state into immutable fields.
+
+Step 4: Use the Product
+The client receives a fully constructed, immutable Product. The Builder can be discarded or reused to create a different configuration.
+
+
+Implementing Builder
+
+Now let's implement the Builder pattern for our HttpRequest example. We create the Product class with a private constructor and a static nested Builder class.
+
+1. Create the Product (HttpRequest) and Builder
+We start by creating the HttpRequest class, the product we want to build. It has multiple fields (some required, some optional), and its constructor will be private, forcing clients to construct it via the builder.
+
+The builder class will be defined as a static nested class within HttpRequest, and the constructor will accept an instance of that builder to initialize the fields.
+
+```python
+class HttpRequest:
+    def __init__(self, builder):
+        self.url = builder._url
+        self.method = builder._method
+        self.headers = dict(builder._headers)  # defensive copy
+        self.query_params = dict(builder._query_params)
+        self.body = builder._body
+        self.timeout = builder._timeout
+
+    def __str__(self):
+        return (f"HttpRequest(url='{self.url}', method='{self.method}', "
+                f"headers={self.headers}, query_params={self.query_params}, "
+                f"body='{self.body}', timeout={self.timeout})")
+
+    class Builder:
+        def __init__(self, url):
+            self._url = url  # required
+            self._method = "GET"
+            self._headers = {}
+            self._query_params = {}
+            self._body = None
+            self._timeout = 30000
+
+        def method(self, method):
+            self._method = method
+            return self
+
+        def add_header(self, key, value):
+            self._headers[key] = value
+            return self
+
+        def add_query_param(self, key, value):
+            self._query_params[key] = value
+            return self
+
+        def body(self, body):
+            self._body = body
+            return self
+
+        def timeout(self, timeout):
+            self._timeout = timeout
+            return self
+
+        def build(self):
+            return HttpRequest(self)
+```
+
+2. Using the Builder from Client Code
+Here is how clients construct different types of HTTP requests:
+
+
+```python
+if __name__ == "__main__":
+    # Simple GET request
+    get = HttpRequest.Builder("https://api.example.com/users") \
+        .build()
+
+    # POST with body and custom timeout
+    post = HttpRequest.Builder("https://api.example.com/users") \
+        .method("POST") \
+        .add_header("Content-Type", "application/json") \
+        .body('{"name":"Alice","email":"alice@example.com"}') \
+        .timeout(5000) \
+        .build()
+
+    # Authenticated PUT with query parameters
+    put = HttpRequest.Builder("https://api.example.com/config") \
+        .method("PUT") \
+        .add_header("Authorization", "Bearer token123") \
+        .add_header("Content-Type", "application/json") \
+        .add_query_param("env", "production") \
+        .add_query_param("version", "2") \
+        .body('{"feature_flag":true}') \
+        .timeout(10000) \
+        .build()
+
+    print(get)
+    print(post)
+    print(put)
+```
+
+Compare this to the telescoping constructor version. Every field is named. No nulls. No positional guessing. You can set fields in any order, and it is immediately obvious what each request looks like.
+
+What We Achieved
+
+No telescoping constructors or null arguments. Each field is set by name through a dedicated method.
+Readable, self-documenting code. The chain of method calls reads like a specification of the request.
+Immutable products. Once built, the HttpRequest cannot be modified. Thread-safe by design.
+Easy to extend. Adding a new optional field means adding one method to the Builder. No existing code breaks.
+Flexible ordering. Clients can call builder methods in any order. No positional coupling.
+
+The Director Pattern
+
+So far, the client has been calling builder methods directly. But what happens when multiple parts of your codebase need to create the same type of request?
+
+For example, every API call to your payment service needs the same authorization header, content type, and timeout. Duplicating that configuration across 20 call sites is a maintenance problem waiting to happen.
+
+The Director solves this by encapsulating common construction sequences into named methods. Instead of every client knowing how to configure a builder, the Director provides pre-built recipes.
+
+```python
+import uuid
+
+class HttpRequestDirector:
+
+    def build_simple_get(self, url):
+        return HttpRequest.Builder(url) \
+            .method("GET") \
+            .timeout(30000) \
+            .build()
+
+    def build_authenticated_post(self, url, token, body):
+        return HttpRequest.Builder(url) \
+            .method("POST") \
+            .add_header("Authorization", f"Bearer {token}") \
+            .add_header("Content-Type", "application/json") \
+            .body(body) \
+            .timeout(10000) \
+            .build()
+
+    def build_internal_service_call(self, url):
+        return HttpRequest.Builder(url) \
+            .method("GET") \
+            .add_header("X-Internal-Service", "true") \
+            .add_header("X-Trace-Id", str(uuid.uuid4())) \
+            .timeout(5000) \
+            .build()
+
+# Usage
+if __name__ == "__main__":
+    director = HttpRequestDirector()
+
+    get = director.build_simple_get("https://api.example.com/users")
+    post = director.build_authenticated_post(
+        "https://api.example.com/orders", "token123", '{"item":"book"}')
+    internal = director.build_internal_service_call(
+        "https://internal.service/health")
+
+    print(get)
+    print(post)
+    print(internal)
+```
+
+Practical Example: SQL QueryBuilder
+A query builder that constructs SQL SELECT statements step-by-step. This is a common pattern in ORMs and database libraries.
+
+```python
+class SqlQuery:
+    def __init__(self, builder):
+        self.table = builder._table
+        self.columns = list(builder._columns)
+        self.conditions = list(builder._conditions)
+        self.order_by = builder._order_by
+        self.order_direction = builder._order_direction
+        self.limit_val = builder._limit
+        self.offset_val = builder._offset
+
+    def to_sql(self):
+        cols = ", ".join(self.columns) if self.columns else "*"
+        sql = f"SELECT {cols} FROM {self.table}"
+        if self.conditions:
+            sql += " WHERE " + " AND ".join(self.conditions)
+        if self.order_by:
+            sql += f" ORDER BY {self.order_by} {self.order_direction}"
+        if self.limit_val > 0:
+            sql += f" LIMIT {self.limit_val}"
+        if self.offset_val > 0:
+            sql += f" OFFSET {self.offset_val}"
+        return sql
+
+    class Builder:
+        def __init__(self, table):
+            self._table = table
+            self._columns = []
+            self._conditions = []
+            self._order_by = None
+            self._order_direction = "ASC"
+            self._limit = 0
+            self._offset = 0
+
+        def select(self, *cols):
+            self._columns.extend(cols)
+            return self
+
+        def where(self, condition):
+            self._conditions.append(condition)
+            return self
+
+        def order_by(self, column, direction="ASC"):
+            self._order_by = column
+            self._order_direction = direction
+            return self
+
+        def limit(self, limit):
+            self._limit = limit
+            return self
+
+        def offset(self, offset):
+            self._offset = offset
+            return self
+
+        def build(self):
+            return SqlQuery(self)
+
+if __name__ == "__main__":
+    query1 = SqlQuery.Builder("users") \
+        .select("name", "email") \
+        .where("age > 18") \
+        .where("active = true") \
+        .order_by("name", "ASC") \
+        .limit(10) \
+        .build()
+
+    query2 = SqlQuery.Builder("orders") \
+        .select("id", "total", "created_at") \
+        .where("status = 'completed'") \
+        .where("total > 100") \
+        .order_by("created_at", "DESC") \
+        .limit(20) \
+        .offset(40) \
+        .build()
+
+    print(query1.to_sql())
+    print(query2.to_sql())
+```
+
+The SQL QueryBuilder shows how Builder naturally fits domain-specific languages. Each method call adds a clause, and build() (or toSql()) assembles everything into a valid SQL string.
+
+
+
 
 - **5. Prototype Pattern**
+
+```
+The Prototype Design Pattern is a creational design pattern that lets you create new objects by cloning existing ones, instead of instantiating them from scratch.
+```
+
+t’s particularly useful in situations where:
+
+Creating a new object is expensive, time-consuming, or resource-intensive.
+You want to avoid duplicating complex initialization logic.
+You need many similar objects with only slight differences.
+The Prototype Pattern allows you to create new instances by cloning a pre-configured prototype object, ensuring consistency while reducing boilerplate and complexity.
+
+1. The Challenge of Cloning Objects
+Imagine you have an object in your system, and you want to create an exact copy of it. How would you do it?
+
+Your first instinct might be to:
+
+Create a new object of the same class.
+Manually copy each field from the original object to the new one.
+Simple enough, right?
+
+Well, not quite.
+
+Problem 1: Encapsulation Gets in the Way
+This approach assumes that all fields of the object are publicly accessible. But in a well-designed system, many fields are private and hidden behind encapsulation. That means your cloning logic can’t access them directly.
+
+Unless you break encapsulation (which defeats the purpose of object-oriented design), you can’t reliably copy the object this way.
+
+Problem 2: Class-Level Dependency
+Even if you could access all the fields, you'd still need to know the concrete class of the object to instantiate a copy.
+
+This tightly couples your cloning logic to the object's class, which introduces problems:
+
+It violates the Open/Closed Principle.
+It reduces flexibility if the object's implementation changes.
+It becomes harder to scale when you work with polymorphism.
+Problem 3: Interface-Only Contexts
+In many cases, your code doesn’t work with concrete classes at all, it works with interfaces.
+
+For example:
+
+```python
+def process_shape(shape: Shape):
+    # Do something with shape
+    pass
+```
+
+
