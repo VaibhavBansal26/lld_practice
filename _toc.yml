@@ -37,4 +37,7 @@ parts:
       - file: 5.easy_problems/tic_tac_toe
       - file: 5.easy_problems/shipping_locker_system
       - file: 5.easy_problems/black_jack
+      - file: 5.easy_problems/amazon_prime
+      - file: 5.easy_problems/prime_video
+      - file: 5.easy_problems/google_docs
       
