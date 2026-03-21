@@ -6,19 +6,468 @@
 Design a parking lot system that can manage parking spaces, vehicles, and parking tickets.
 ```
 
-**Step 1: Understand the problem statement and requirements**
+# Step 1: Understand the problem statement and requirements
 
-**Step 2: Identify the main entities and their relationships**
+This code solves a **parking lot system design** problem.
 
-Main Entities:
-1. Vehicle - license_plate, size
-2. Parking Lot
-3. Parking Manager
-4. Fare Calculator
+The system should support:
 
-**Step 3: Define the classes and their attributes and methods**
+- Different types of vehicles: **Bike, Car, Truck**
+- Different types of parking spots: **Compact, Regular, Oversized, Handicapped**
+- Parking and unparking vehicles
+- Assigning a suitable parking spot to a vehicle
+- Generating a ticket when a vehicle enters
+- Calculating parking fare when a vehicle leaves
+- Supporting flexible fare calculation using multiple pricing strategies
 
-**Step 4: Implement the classes and their methods**
+## Functional requirements covered by the code
+
+1. A vehicle enters the parking lot
+2. The system finds an available parking spot based on vehicle size
+3. The system parks the vehicle and generates a ticket
+4. When the vehicle exits, the system calculates duration and fare
+5. The system frees the parking spot
+
+## Design goals achieved
+
+- Good use of **object oriented design**
+- Extensible fare calculation using the **Strategy pattern**
+- Clear separation of concerns between parking logic, ticketing, and fare calculation
+- Easy to extend with new vehicle types or pricing rules later
+
+---
+
+# Step 2: Identify the main entities and their relationships
+
+## Main entities
+
+### 1. Vehicle
+Represents a vehicle entering the parking lot.
+
+Subtypes:
+- `Bike`
+- `Car`
+- `Truck`
+
+Each vehicle has:
+- `license_plate`
+- `size`
+
+---
+
+### 2. ParkingSpot
+Represents a parking space.
+
+Subtypes:
+- `CompactSpot`
+- `RegularSpot`
+- `OversizedSpot`
+- `HandicappedSpot`
+
+Each spot has:
+- `spot_number`
+- `vehicle` currently parked
+- methods to check availability, occupy, and vacate the spot
+
+---
+
+### 3. ParkingManager
+Responsible for:
+- finding a suitable parking spot
+- parking a vehicle
+- unparking a vehicle
+- maintaining mappings such as:
+  - vehicle to spot
+  - spot to vehicle
+
+---
+
+### 4. Ticket
+Represents a parking session.
+
+Contains:
+- `ticket_id`
+- `vehicle`
+- `parking_spot`
+- `entry_time`
+- `exit_time`
+
+Also helps calculate parking duration.
+
+---
+
+### 5. FareStrategy
+An abstraction for pricing logic.
+
+Implementations:
+- `BaseFareStrategy`
+- `PeakHoursFareStrategy`
+
+---
+
+### 6. FareCalculator
+Applies one or more fare strategies in sequence.
+
+---
+
+### 7. ParkingLot
+The top level coordinator that:
+- accepts vehicle entry
+- generates ticket
+- processes vehicle exit
+- calculates final fare
+
+---
+
+# Step 3: Define the classes and their attributes and methods
+
+## 1. `Vehicle` abstract class
+
+### Purpose
+Base class for all vehicle types.
+
+### Attributes
+- `license_plate`
+- `size`
+
+### Methods
+- `get_size()`
+- `__hash__()`
+- `__eq__()`
+
+### Child classes
+- `Bike` → `SMALL`
+- `Car` → `MEDIUM`
+- `Truck` → `LARGE`
+
+---
+
+## 2. `ParkingSpot` abstract class
+
+### Purpose
+Defines the common contract for all parking spots.
+
+### Methods
+- `is_available()`
+- `occupy(vehicle)`
+- `vacate()`
+- `get_spot_number()`
+- `get_size()`
+
+### Child classes
+- `CompactSpot`
+- `RegularSpot`
+- `OversizedSpot`
+- `HandicappedSpot`
+
+Each child class stores:
+- `spot_number`
+- `vehicle`
+
+Each child class defines its own parking size.
+
+---
+
+## 3. `ParkingManager`
+
+### Purpose
+Handles spot allocation and release.
+
+### Attributes
+- `available_spots`
+- `vehicle_to_spot_map`
+- `spot_to_vehicle_map`
+
+### Methods
+- `find_spot_for_vehicle(vehicle)`
+- `park_vehicle(vehicle)`
+- `unpark_vehicle(vehicle)`
+- `find_vehicle_spot(vehicle)`
+- `find_spot_vehicle(spot)`
+
+### Responsibility
+This is the core parking allocation engine.
+
+---
+
+## 4. `Ticket`
+
+### Purpose
+Tracks the parking session for a vehicle.
+
+### Attributes
+- `ticket_id`
+- `vehicle`
+- `parking_spot`
+- `entry_time`
+- `exit_time`
+
+### Methods
+- `calculate_parking_duration()`
+- `get_vehicle()`
+- `get_entry_time()`
+- `get_exit_time()`
+- `set_exit_time(exit_time)`
+
+---
+
+## 5. `FareStrategy`
+
+### Purpose
+Defines the interface for all pricing rules.
+
+### Method
+- `calculate_fare(ticket, input_fare)`
+
+This allows multiple pricing rules to be chained together.
+
+---
+
+## 6. `BaseFareStrategy`
+
+### Purpose
+Applies the base parking charge depending on vehicle size.
+
+### Rates
+- Small: `1.0`
+- Medium: `2.0`
+- Large: `3.0`
+
+### Method
+- `calculate_fare(ticket, input_fare)`
+
+---
+
+## 7. `PeakHoursFareStrategy`
+
+### Purpose
+Adds extra fare during peak hours.
+
+### Rule
+Peak hours:
+- `7 to 10`
+- `16 to 19`
+
+### Methods
+- `calculate_fare(ticket, input_fare)`
+- `is_peak_hours(time)`
+
+---
+
+## 8. `FareCalculator`
+
+### Purpose
+Applies all fare strategies one after another.
+
+### Attribute
+- `fare_strategies`
+
+### Method
+- `calculate_fare(ticket)`
+
+---
+
+## 9. `ParkingLot`
+
+### Purpose
+Main interface used by the client.
+
+### Attributes
+- `parking_manager`
+- `fare_calculator`
+
+### Methods
+- `generate_ticket_id()`
+- `enter_vehicle(vehicle)`
+- `leave_vehicle(ticket)`
+
+This class connects parking flow and billing flow.
+
+---
+
+# Step 4: Implement the classes and their methods
+
+## 1. Vehicle and parking spot types are created
+The design starts by defining enums and subclasses for:
+- vehicle sizes
+- parking spot sizes
+
+This makes the model clear and extensible.
+
+---
+
+## 2. `ParkingManager` handles spot allocation
+When a vehicle enters:
+
+- `ParkingLot.enter_vehicle(vehicle)` is called
+- it delegates to `ParkingManager.park_vehicle(vehicle)`
+- `ParkingManager.find_spot_for_vehicle(vehicle)` searches for an available matching spot
+- if found, the spot is occupied and mappings are updated
+
+---
+
+## 3. Ticket is generated
+After successful parking:
+
+- a `Ticket` object is created
+- entry time is stored
+- a unique ticket id is generated using UUID
+
+---
+
+## 4. Fare calculation is strategy based
+When the vehicle leaves:
+
+- exit time is set in the ticket
+- the vehicle is unparked
+- `FareCalculator.calculate_fare(ticket)` applies:
+  - `BaseFareStrategy`
+  - then `PeakHoursFareStrategy`
+
+This makes pricing flexible and extendable.
+
+---
+
+## 5. Parking spot becomes available again
+After exit:
+
+- the parked spot is vacated
+- it becomes available for the next vehicle
+
+---
+
+# Design patterns used
+
+## 1. Strategy Pattern
+Used in:
+- `FareStrategy`
+- `BaseFareStrategy`
+- `PeakHoursFareStrategy`
+
+### Why it is used
+It allows the system to add or change pricing rules without modifying existing logic.
+
+### Future extensions
+You can easily add:
+- weekend pricing
+- holiday pricing
+- discount pricing
+- flat first hour pricing
+
+---
+
+## 2. Inheritance
+Used in:
+- `Vehicle` → `Bike`, `Car`, `Truck`
+- `ParkingSpot` → `CompactSpot`, `RegularSpot`, `OversizedSpot`, `HandicappedSpot`
+
+### Why it is used
+It helps reuse common behavior while allowing each subtype to define its specific characteristics.
+
+---
+
+## 3. Abstraction
+Used in:
+- `Vehicle`
+- `ParkingSpot`
+- `FareStrategy`
+
+### Why it is used
+It defines clean contracts and improves extensibility and readability.
+
+---
+
+# Strengths of the design
+
+- Modular and easy to read
+- Good separation of concerns
+- Pricing logic is decoupled from parking logic
+- Easy to extend with new rules
+- Interview friendly low level design
+
+---
+
+# Limitations in the current implementation
+
+## 1. Spot matching is exact only
+Currently:
+- small vehicle gets only small spot
+- medium vehicle gets only medium spot
+- large vehicle gets only large spot
+
+In real systems:
+- a bike may fit in a medium or large spot
+- a car may fit in a large spot if medium is unavailable
+
+So this logic can be improved.
+
+---
+
+## 2. Handicapped spot logic is incomplete
+The code has a `HandicappedSpot`, but there is no special handling for:
+- handicapped permits
+- reserved access
+- priority rules
+
+---
+
+## 3. Duplicate code in parking spot classes
+`CompactSpot`, `RegularSpot`, `OversizedSpot`, and `HandicappedSpot` contain very similar logic.
+
+This could be simplified by using one reusable concrete base class with configurable size.
+
+---
+
+## 4. No ticket repository
+The system does not store:
+- all active tickets
+- parking history
+- completed transactions
+
+A real system would usually have a ticket store or database.
+
+---
+
+## 5. No gate or payment abstractions
+A more complete parking lot design may also include:
+- entry gate
+- exit gate
+- payment processor
+- display board
+- admin panel
+
+---
+
+# Interview style summary
+
+You can explain this design like this:
+
+> This is a parking lot low level design where vehicles are modeled using inheritance, parking spots are abstracted using a common interface, and parking allocation is handled by a ParkingManager. A Ticket stores parking session details, and fare calculation uses the Strategy pattern so multiple pricing rules can be applied independently. The ParkingLot acts as the orchestration layer for vehicle entry and exit.
+
+---
+
+# Very concise interview answer
+
+## Problem
+Design a parking lot that supports parking, unparking, ticket generation, and fare calculation.
+
+## Entities
+- Vehicle
+- ParkingSpot
+- ParkingManager
+- Ticket
+- FareStrategy
+- FareCalculator
+- ParkingLot
+
+## Design
+- Inheritance for vehicles and spots
+- Strategy pattern for fare rules
+- ParkingManager for spot allocation
+- ParkingLot for orchestration
+
+## Flow
+Vehicle enters → spot assigned → ticket created → vehicle exits → fare calculated → spot released
 
 **Step 5: Test the implementation with different scenarios**
 
