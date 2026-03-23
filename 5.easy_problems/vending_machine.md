@@ -1,5 +1,349 @@
 # 3. Vending Machine
 
+# Step 1: Understand the problem statement and requirements
+
+This code is designing a **vending machine system**. It supports product storage, money insertion, product selection, transaction validation, dispensing, and change return.
+
+## Main requirements covered
+
+- Store products in racks
+- Track inventory count for each rack
+- Let a user insert money
+- Let a user choose a product by rack ID
+- Validate whether the transaction is valid
+- Dispense the selected product
+- Deduct product price from inserted balance
+- Return remaining change
+- Keep transaction history
+- Allow transaction cancellation
+
+## Core flow
+
+A user inserts money, selects a product, confirms the transaction, receives the product, and gets back remaining change. If anything is wrong, the system throws an exception.
+
+---
+
+# Step 2: Identify the main entities and their relationships
+
+## 1. `Product`
+Represents an item sold by the vending machine.
+
+### Attributes
+- `product_code`
+- `description`
+- `unit_price`
+
+---
+
+## 2. `Rack`
+Represents a vending slot that holds one product and its quantity.
+
+### Attributes
+- `rack_code`
+- `product`
+- `count`
+
+### Relationship
+A rack contains one product type and tracks how many units are left.
+
+---
+
+## 3. `InventoryManager`
+Manages all racks in the vending machine.
+
+### Responsibilities
+- store racks
+- fetch a product from a rack
+- fetch a rack by code
+- dispense one item from a rack
+- update the machine's rack setup
+
+---
+
+## 4. `PaymentProcessor`
+Handles inserted money and change.
+
+### Responsibilities
+- add money
+- charge product amount
+- return remaining balance as change
+- expose current balance
+
+---
+
+## 5. `Transaction`
+Represents one purchase attempt.
+
+### Stores
+- selected product
+- selected rack
+- total amount returned as change
+
+---
+
+## 6. `VendingMachine`
+Main controller class that coordinates inventory, payment, and transaction flow.
+
+### Responsibilities
+- accept money
+- allow product selection
+- validate transaction
+- complete purchase
+- store transaction history
+- cancel transaction
+
+---
+
+## 7. `InvalidTransactionException`
+Custom exception used when the transaction fails validation.
+
+---
+
+# Step 3: Define the classes and their attributes and methods
+
+## 1. `Product`
+
+### Purpose
+Stores product information.
+
+### Attributes
+- `product_code: str`
+- `description: str`
+- `unit_price: Decimal`
+
+### Note
+It is defined as a `dataclass(frozen=True)`, so product objects are immutable.
+
+---
+
+## 2. `Rack`
+
+### Purpose
+Represents a rack containing a specific product and quantity.
+
+### Attributes
+- `rack_code`
+- `product`
+- `count`
+
+### Methods
+- `get_product()`
+- `get_product_count()`
+- `set_count(count)`
+
+---
+
+## 3. `InventoryManager`
+
+### Purpose
+Manages inventory inside the machine.
+
+### Attribute
+- `racks: Dict[str, Rack]`
+
+### Methods
+- `get_product_in_rack(rack_code)`
+- `dispense_product_from_rack(rack)`
+- `update_rack(racks)`
+- `get_rack(name)`
+
+---
+
+## 4. `PaymentProcessor`
+
+### Purpose
+Tracks user balance and payment actions.
+
+### Attribute
+- `current_balance`
+
+### Methods
+- `add_balance(amount)`
+- `charge(amount)`
+- `return_change()`
+- `get_current_balance()`
+
+---
+
+## 5. `Transaction`
+
+### Purpose
+Stores current or completed purchase details.
+
+### Attributes
+- `product`
+- `rack`
+- `total_amount`
+
+### Methods
+- `set_product(product)`
+- `get_product()`
+- `set_rack(rack)`
+- `get_rack()`
+- `set_total_amount(total_amount)`
+- `get_total_amount()`
+
+---
+
+## 6. `VendingMachineState` and `NoMoneyInsertedState`
+
+### Purpose
+These are placeholder classes for a possible **State pattern** design.
+
+### Current status
+They are declared but not actively used for behavior control in this implementation.
+
+---
+
+## 7. `VendingMachine`
+
+### Purpose
+Main class that orchestrates the vending machine behavior.
+
+### Attributes
+- `transaction_history`
+- `current_transaction`
+- `inventory_manager`
+- `payment_processor`
+- `current_state`
+- `balance`
+- `selected_product`
+
+### Methods
+- `set_rack(rack)`
+- `insert_money(amount)`
+- `choose_product(rack_id)`
+- `confirm_transaction()`
+- `_validate_transaction()`
+- `get_transaction_history()`
+- `cancel_transaction()`
+- `get_inventory_manager()`
+
+---
+
+# Step 4: Implement the classes and their methods
+
+## 1. Product and rack setup
+Products are created first, then racks are created with a product and count. After that, the machine is loaded with those racks using `set_rack(...)`.
+
+---
+
+## 2. Money insertion
+The user inserts money through:
+
+```python
+machine.insert_money(Decimal("5.00"))
+```
+
+This delegates to `PaymentProcessor.add_balance(...)`, which increases the current balance.
+
+---
+
+## 3. Product selection
+The user selects a product by rack ID using:
+
+```python
+machine.choose_product("A1")
+```
+
+This does two things:
+- fetches the product from the inventory manager
+- stores both the selected product and rack inside the current transaction
+
+---
+
+## 4. Transaction validation
+Before completing the purchase, `_validate_transaction()` checks:
+
+- product is selected
+- rack is selected
+- rack has stock
+- inserted balance is enough to buy the product
+
+If any check fails, it raises `InvalidTransactionException`.
+
+---
+
+## 5. Charging and dispensing
+Inside `confirm_transaction()`:
+
+- the product price is charged using `payment_processor.charge(product.unit_price)`
+- one item is removed from the rack using `inventory_manager.dispense_product_from_rack(rack)`
+
+---
+
+## 6. Return change
+After charging, the machine returns the leftover balance:
+
+- `return_change()` gives back the remaining amount
+- that returned amount is stored in `current_transaction.total_amount`
+
+---
+
+## 7. Save history and reset machine state
+After a successful transaction:
+
+- the transaction is added to `transaction_history`
+- `current_transaction` is reset
+- `selected_product` is cleared
+
+This prepares the machine for the next purchase.
+
+---
+
+# Design patterns and design ideas used
+
+## 1. Composition
+`VendingMachine` is built using other components:
+- `InventoryManager`
+- `PaymentProcessor`
+- `Transaction`
+
+So the system is modular and responsibilities are separated.
+
+## 2. Encapsulation
+Each class manages its own data and behavior:
+- `Rack` manages count
+- `PaymentProcessor` manages balance
+- `InventoryManager` manages racks
+- `Transaction` manages purchase details
+
+## 3. State pattern placeholder
+`VendingMachineState` and `NoMoneyInsertedState` suggest the author may later implement the **State pattern**, but right now they are placeholders only.
+
+---
+
+# Strengths of the design
+
+- Clear separation of concerns
+- Easy to understand flow
+- Good use of helper classes
+- Custom exception for invalid transactions
+- Keeps transaction history
+- Easy to extend later with more states or payment methods
+
+---
+
+# Limitations in the current implementation
+
+## 1. State classes are not fully implemented
+The machine has state placeholders, but they do not yet control behavior.
+
+## 2. `balance` attribute in `VendingMachine` is unused
+The actual balance is managed by `PaymentProcessor`, so `self.balance` is redundant right now.
+
+## 3. `selected_product` stores rack ID, not actual product
+The name suggests product, but it actually stores the rack identifier.
+
+## 4. `cancel_transaction()` returns change internally but does not return it to caller
+It resets things correctly, but the returned change is not exposed back to the user.
+
+---
+
+# Interview style summary
+
+> This code implements a vending machine system where `Product` represents sale items, `Rack` stores products and stock count, `InventoryManager` manages inventory, `PaymentProcessor` handles money and change, and `Transaction` stores purchase details. The `VendingMachine` class coordinates the full purchase flow by accepting money, selecting products, validating the transaction, dispensing inventory, returning change, and storing transaction history.
+
 # Code
 
 ```python
